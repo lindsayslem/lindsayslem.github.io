@@ -11,7 +11,7 @@ Step 1: Load the Data<br>
 We'll start by loading a CSV of Bitcoin prices. You can use Yahoo Finance, if you have an account, investing.com, or any other site with historical Bicoin data. 
 You can select the time window that you want the data for. I did 5 years, but you can choose exact dates as well. Save it as Bitcoin.csv. 
 Make sure to import pandas for this step and matplotlib (we will be using matplotlib later, but it is a good idea to do all imports at the top of your file).<br>
-You can download your data ![here](https://www.investing.com/crypto/bitcoin/historical-data)
+You can download your data [here](https://www.investing.com/crypto/bitcoin/historical-data)
 ```python
 import pandas as pd
 import matplotlib.pyplot as plt
