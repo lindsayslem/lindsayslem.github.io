@@ -20,11 +20,11 @@ data = pd.read_csv("bitcoin.csv", parse_dates=["Date"])
 data.head()
 ```
 <br>Step 2: Clean and Prepare<br>
-It is common for raw data to having missing values or noise.
-In this step we will drop missing values, remove commas in the the pricing dollar amount, and convert the numbers into floats so they are not read as strings.<br>
-Then, we will add a 30-day moving average column to be able to establish a more clear trend. <br>
-You could choose a different time window for the moving average, depending on what you are trying to showcase: 90 days to represent quarters or 180 days to represent half a year. 
-For this dataset I found 30 days will give a more clear picture of trends while ignoring small fluctuations.
+It is common for raw data to have missing values or noise.
+In this step we will drop missing values, remove commas in the pricing dollar amount, and convert the numbers into floats so they are not read as strings.<br>
+Then, we will add a 90-day moving average column to be able to establish a more clear trend. <br>
+You could choose a different time window for the moving average, depending on what you are trying to showcase: 30 days to represent months or 180 days to represent half a year. 
+For this dataset I found 90 days will give a more clear picture of trends while ignoring small fluctuations. The 
 ```python
 # Keep only necessary columns
 data = data[["Date", "Price"]]
@@ -35,12 +35,12 @@ data["Price"] = data["Price"].str.replace(",", "").astype(float)
 # Drop missing values
 data = data.dropna()
 
-# Add a 30 day moving average
-data["MovingAverage"] = data["Price"].rolling(window=30).mean()
+# Add a 90 day moving average
+data["MovingAverage"] = data["Price"].rolling(window=90).mean()
 ```
 <br>Step 3: Plot the Closing Price<br>
 Now that the data is cleaned, we will visualize the raw daily Bitcoin prices at market close over time(5 years for this dataset).
-This is where we will be using matplotlob that we imported earlier.<br>
+This is where we will be using matplotlib that we imported earlier.<br>
 ```python
 plt.figure(figsize=(12, 6))
 plt.plot(data["Date"], data["Price"], label="Price", color="blue")
@@ -52,19 +52,19 @@ plt.show()
 ```
 This plot shows daily closing price of Bitcoin. With how frequent the price changes, there are a lot of sharp changes in the graph. 
 You are able to see the overall trend, but it is more difficult to tell what is happening in the smaller sections. <br><br>
-<br>Step 4: Plot the 30-day moving average<br>
-In order to make the trends easier to see, we will overlay the 30-day moving average we found earlier. This smooths the noise in the short-term movements.<br>
+<br>Step 4: Plot the 90-day moving average<br>
+In order to make the trends easier to see, we will overlay the 90-day moving average we found earlier. This smooths the noise in the short-term movements.<br>
 ```python
 plt.figure(figsize=(12, 6))
 plt.plot(data["Date"], data["Price"], label="Price", color="blue")
-plt.plot(data["Date"], data["MovingAverage"], label="30-day Moving Average", color="red")
-plt.title("Bitcoin Price with 30-day Moving Average")
+plt.plot(data["Date"], data["MovingAverage"], label="90-day Moving Average", color="red")
+plt.title("Bitcoin Price with 90-day Moving Average")
 plt.xlabel("Date")
 plt.ylabel("Price (USD)")
 plt.legend()
 plt.show()
 ```
-You can now compare the smooth 30-day average(red) to the daily closing price(blue) to see more clearly what is going on.
+You can now compare the smooth 90-day average(red) to the daily closing price(blue) to see more clearly what is going on.
 
 
 
