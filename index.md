@@ -4,11 +4,11 @@
 What is the problem? Why it matters?<br>
 Bitcoin prices change a lot from day to day. These frequent fluctuations make it difficult to know if a movement is an indicator of a trend or just market noise. <br>
 In addition to that, CSVs from finance sites often come with inconsistent formatting, missing values, or even unnecessary columns.
-Without statistic tools to standardize, clean, and visualize the data, it's hard to separate long-term market trends from random fluctuations.
+Without statistical tools to standardize, clean, and visualize the data, it's hard to separate long-term market trends from random fluctuations.
 Solving this problem allows for more meaningful analysis and gives clear insights into Bitcoin's behavior. <br><br>
 ## Steps:
 ### Step 1: Load the Data
-We'll start by loading a CSV of Bitcoin prices. You can use Yahoo Finance, if you have an account, investing.com, or any other site with historical Bicoin data. 
+We'll start by loading a CSV of Bitcoin prices. You can use Yahoo Finance, if you have an account, investing.com, or any other site with historical Bitcoin data. 
 You can select the time window that you want the data for. I did 5 years, but you can choose exact dates as well. Save it as Bitcoin.csv. 
 Make sure to import pandas for this step, numpy and matplotlib (we will be using matplotlib and numpy later, but it is a good idea to do all imports at the top of your file).<br>
 You can download your data [here](https://www.investing.com/crypto/bitcoin/historical-data)
@@ -79,7 +79,7 @@ Where: <br>
 $P_t = today's closing price$ <br>
 $P_t-1 = yesterday's closing price$ <br>
 $r_t = log return for day t$ <br>
-By doing this we can measure Bitcoin's volatility(how much volume moves from one day to the next). This is really important for Bitcoin because it is highly volatile.
+By doing this we can measure Bitcoin's volatility(how much value moves from one day to the next). This is really important for Bitcoin because it is highly volatile.
 ```python
 #Calculate log returns
 data["LogReturn"] = np.log(data["Price"] / data["Price"].shift(1))
