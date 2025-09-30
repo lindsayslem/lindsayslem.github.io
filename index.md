@@ -87,7 +87,15 @@ data["LogReturn"] = np.log(data["Price"] / data["Price"].shift(1))
 #Plot histogram of daily log returns
 data["LogReturn"].plot.hist(bins=50, figsize=(8, 5), title="Distribution of Bitcoin Daily Log Returns")
 ```
+![Distribution of Bitcoin Daily Log Returns](https://github.com/user-attachments/assets/6e15bd2b-cd35-4ae1-80d2-1e6c99b9470f "Distribution of Bitcoin Daily Log Returns")
+
 This shows how frequently Bitcoin's price moves by different amounts in a single day. Most of the daily returns are clustered around zero, meaning price doesn't usually change much from day to day. Since the histogram has large tails it means that there are some days with large positive or negative returns
+
+## Conclusion 
+In this tutorial, we solved a common problem with financial data: figuring out if price movements are short-term noise or an actual trend. We loaded Bitcoin's historical data, cleaned and prepared it for analysis, and applied visualization techniques with pandas, matplotlib, and numpy. <br>
+We were able to see how daily prices display sharp movements, while 90 day moving averages are able to highlight long-term direction. We then introduced log returns to statistically study Bitcoin's volatility and confirms it is a high-risk, high-reward asset or long-term beneficial asset.<br>
+Data manipulation like this is not limited to just Bitcoin, it can be applied to stocks, indices, or non financial data. These tools are able to provide valuable insight.<br><br>
+**So now it's your turn! Find a dataset that interests you and give it a try!**
 
 
 
