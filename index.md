@@ -10,11 +10,12 @@ Solving this problem allows for more meaningful analysis and gives clear insight
 ### Step 1: Load the Data
 We'll start by loading a CSV of Bitcoin prices. You can use Yahoo Finance, if you have an account, investing.com, or any other site with historical Bicoin data. 
 You can select the time window that you want the data for. I did 5 years, but you can choose exact dates as well. Save it as Bitcoin.csv. 
-Make sure to import pandas for this step and matplotlib (we will be using matplotlib later, but it is a good idea to do all imports at the top of your file).<br>
+Make sure to import pandas for this step, numpy and matplotlib (we will be using matplotlib and numpy later, but it is a good idea to do all imports at the top of your file).<br>
 You can download your data [here](https://www.investing.com/crypto/bitcoin/historical-data)
 ```python
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 # Load Bitcoin csv with date parsing
 data = pd.read_csv("bitcoin.csv", parse_dates=["Date"])
@@ -71,11 +72,22 @@ plt.show()
 ![Bitcoin Price with 90-day Moving Average](https://github.com/user-attachments/assets/3412352d-ad68-4e95-8cb2-2e0d79f61554 "Bitcoin Price with 90-day Moving Average")
 
 You can now compare the smooth 90-day average(red) to the daily closing price(blue) to see more clearly what is going on. The red line allows us to see the clear upward trend in the last 5 years.
-### Step 5: Calculate Log Returns<br>
-So far we have focused on the price of 
+### Step 5: Calculate Log Returns
+So far we have focused on the price of Bitcoin, but equally as important is the returns or rate at which the prices change over time. Rather than looking at percentages, analysts often look at logarithmic returns because they are easier to compare across different time periods.<br>
+The formula for log returns is $r_t = \ln\left(\frac{P_t}{P_{t-1}}\right)$ <br>
+Where: <br>
+$P_t = today's closing price$ <br>
+$P_t-1 = yesterday's closing price$ <br>
+$r_t = log return for day t$ <br>
+By doing this we can measure Bitcoin's volatility(how much volume moves from one day to the next). This is really important for Bitcoin because it is highly volatile.
+```python
+#Calculate log returns
+data["LogReturn"] = np.log(data["Price"] / data["Price"].shift(1))
 
-
-
+#Plot histogram of daily log returns
+data["LogReturn"].plot.hist(bins=50, figsize=(8, 5), title="Distribution of Bitcoin Daily Log Returns")
+```
+This shows how frequently Bitcoin's price moves by different amounts in a single day. Most of the daily returns are clustered around zero, meaning price doesn't usually change much from day to day. Since the histogram has large tails it means that there are some days with large positive or negative returns
 
 
 
