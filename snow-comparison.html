@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Does Brighton or Snowbird Get More Snow? — Lindsay Slemboski Oliphant</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #0f0f1a;
+    --surface: #1a1a2e;
+    --surface2: #1f1f35;
+    --cyan: #00d4ff;
+    --cyan2: #00a8cc;
+    --cyan-dim: rgba(0, 212, 255, 0.12);
+    --cyan-glow: rgba(0, 212, 255, 0.25);
+    --text: #e8e8f0;
+    --text2: #9090a8;
+    --text3: #5a5a72;
+    --border: rgba(0, 212, 255, 0.15);
+    --border2: rgba(255,255,255,0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 0 48px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10, 10, 15, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    color: var(--cyan);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+
+  .nav-back {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--text2);
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+    border: 1px solid var(--border2);
+    transition: all 0.2s;
+  }
+
+  .nav-back:hover {
+    color: var(--cyan);
+    border-color: var(--border);
+    background: var(--cyan-dim);
+  }
+
+  /* MAIN CONTENT */
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 120px 48px 80px;
+  }
+
+  /* HEADER */
+  .post-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .post-label::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--cyan);
+  }
+
+  h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    color: var(--text);
+  }
+
+  .post-meta {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 48px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .meta-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .meta-value {
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 48px;
+  }
+
+  .toc-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .toc ol {
+    list-style: none;
+    counter-reset: toc;
+  }
+
+  .toc li {
+    counter-increment: toc;
+    margin-bottom: 8px;
+  }
+
+  .toc li::before {
+    content: "0" counter(toc) ".";
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--cyan);
+    margin-right: 10px;
+  }
+
+  .toc a {
+    font-size: 14px;
+    color: var(--text2);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .toc a:hover { color: var(--cyan); }
+
+  /* ARTICLE CONTENT */
+  article h2 {
+    font-family: 'Space Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 48px 0 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border2);
+    letter-spacing: -0.01em;
+  }
+
+  article p {
+    font-size: 16px;
+    color: var(--text2);
+    margin-bottom: 20px;
+    font-weight: 300;
+    line-height: 1.8;
+  }
+
+  article strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* FIGURES */
+  .figure {
+    margin: 36px 0;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .figure img {
+    width: 100%;
+    display: block;
+  }
+
+  .figure-caption {
+    padding: 14px 20px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+    border-top: 1px solid var(--border2);
+  }
+
+  /* HIGHLIGHT BOX */
+  .highlight-box {
+    background: var(--cyan-dim);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--cyan);
+    border-radius: 0 8px 8px 0;
+    padding: 20px 24px;
+    margin: 28px 0;
+  }
+
+  .highlight-box p {
+    color: var(--text);
+    margin: 0;
+    font-weight: 400;
+  }
+
+  /* CODE / LINKS */
+  .code-link {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--cyan);
+    text-decoration: none;
+    background: var(--cyan-dim);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+
+  .code-link:hover { background: rgba(0,212,255,0.2); }
+
+  /* LINKS SECTION */
+  .links-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .link-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-size: 13px;
+    color: var(--text2);
+    word-break: break-all;
+  }
+
+  .link-item:hover {
+    border-color: var(--border);
+    color: var(--cyan);
+    transform: translateX(4px);
+  }
+
+  .link-icon {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--cyan);
+    background: var(--cyan-dim);
+    border: 1px solid var(--border);
+    padding: 3px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* TAGS */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 28px 0;
+  }
+
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    background: var(--cyan-dim);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--cyan);
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 40px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+    border-top: 1px solid var(--border2);
+    max-width: 760px;
+    margin: 0 auto;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="https://lindsayslem.github.io" class="nav-logo">LS_</a>
+  <a href="https://lindsayslem.github.io" class="nav-back">← Back to Portfolio</a>
+</nav>
+
+<main>
+  <div class="post-label">Data Analysis · Blog Post</div>
+  <h1>Does Brighton or Snowbird Get More Snow?</h1>
+
+  <div class="post-meta">
+    <div class="meta-item">
+      <span class="meta-label">Author</span>
+      <span class="meta-value">Lindsay Slemboski Oliphant</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Published</span>
+      <span class="meta-value">November 2025</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Topic</span>
+      <span class="meta-value">EDA · Python · REST API</span>
+    </div>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">Table of Contents</div>
+    <ol>
+      <li><a href="#introduction">Introduction</a></li>
+      <li><a href="#data-acquisition">Data Acquisition</a></li>
+      <li><a href="#eda">Exploratory Data Analysis</a></li>
+      <li><a href="#conclusion">Conclusion</a></li>
+      <li><a href="#links">Links</a></li>
+    </ol>
+  </div>
+
+  <article>
+
+    <h2 id="introduction">Introduction</h2>
+    <p>Living in Utah means that having something to do in the winter is essential. For many people, that activity is skiing or snowboarding — but it can be difficult to decide which resort will give you the most snow. For this post, I wanted to discover which resort would be better to get a season pass to, based solely on the amount of snow they get.</p>
+
+    <div class="highlight-box">
+      <p><strong>Key Question:</strong> Over the last ten seasons, did Brighton or Snowbird have better snow?</p>
+    </div>
+
+    <p>To answer this, I extracted historical weather data from Open-Meteo's Historical Weather API for both resorts — making sure to pick two resorts in different canyons — and narrowed the data down to winter months from 2015–2025.</p>
+    <p>This was determined to be ethical data usage because the source encourages use and citation of their API to encourage collaboration in the scientific community.</p>
+
+    <div class="tags">
+      <span class="tag">Python</span>
+      <span class="tag">pandas</span>
+      <span class="tag">Open-Meteo API</span>
+      <span class="tag">EDA</span>
+      <span class="tag">Time Series</span>
+    </div>
+
+    <h2 id="data-acquisition">Data Acquisition</h2>
+    <p>I used the Open-Meteo archive endpoint, which allows you to request daily and hourly weather variables from a specific latitude and longitude.</p>
+    <p>For each resort I converted hourly snow depth to daily max snow depth (hourly snow depth was the only available option), merged that with the daily dates, filtered to winter months, and labeled each row with the resort name.</p>
+    <p>Season was defined as the year of November–April, so November 2015 – April 2016 is the 2015 season. I then looked at days with 6 or more inches of snow and defined them as <strong>powder days</strong>. Since the API provides snowfall in inches, this was straightforward.</p>
+    <p>Finally I calculated snowfall per season (sum of seasonal snowfall) and monthly snowfall averages between the two resorts.</p>
+    <p>The full Python code used to acquire and clean the data is available here: <a href="https://github.com/lindsayslem/Snow-comparison" target="_blank" class="code-link">github.com/lindsayslem/Snow-comparison</a></p>
+
+    <h2 id="eda">Exploratory Data Analysis</h2>
+
+    <div class="figure">
+      <img src="total_powder_days.png" alt="Total Powder Days — Brighton vs Snowbird" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div style="display:none;align-items:center;justify-content:center;height:200px;background:var(--surface2)">
+        <span style="font-family:'Space Mono',monospace;font-size:12px;color:var(--text3)">total_powder_days.png</span>
+      </div>
+      <div class="figure-caption">Fig. 1 — Total Powder Days (2015–2025): Brighton vs. Snowbird</div>
+    </div>
+    <p>From this, we can see that Brighton has had more total powder days in the last 10 years.</p>
+
+    <div class="figure">
+      <img src="total_snowfall_per_season.png" alt="Total Snowfall per Season" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div style="display:none;align-items:center;justify-content:center;height:200px;background:var(--surface2)">
+        <span style="font-family:'Space Mono',monospace;font-size:12px;color:var(--text3)">total_snowfall_per_season.png</span>
+      </div>
+      <div class="figure-caption">Fig. 2 — Total Snowfall per Season: Brighton vs. Snowbird</div>
+    </div>
+    <p>This graph depicts that over the last 10 years, Brighton has had more total seasonal snowfall than Snowbird.</p>
+
+    <div class="figure">
+      <img src="average_monthly_snowfall.png" alt="Average Monthly Snowfall" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div style="display:none;align-items:center;justify-content:center;height:200px;background:var(--surface2)">
+        <span style="font-family:'Space Mono',monospace;font-size:12px;color:var(--text3)">average_monthly_snowfall.png</span>
+      </div>
+      <div class="figure-caption">Fig. 3 — Average Monthly Snowfall: Brighton vs. Snowbird</div>
+    </div>
+    <p>Brighton also shows a higher average monthly snowfall across the season. It was interesting to find that Brighton outperformed Snowbird in all three categories.</p>
+
+    <h2 id="conclusion">Conclusion</h2>
+
+    <div class="highlight-box">
+      <p>Based on 10 winters of historical weather data, <strong>Brighton consistently outperformed Snowbird</strong> in all categories — powder days, total seasonal snowfall, and monthly averages. Although Snowbird is known for steeper terrain and spring riding, Brighton objectively gets more snow on average, making it the better choice if snowfall is the deciding factor for a season pass.</p>
+    </div>
+
+    <h2 id="links">Links</h2>
+    <div class="links-grid">
+      <a href="https://github.com/lindsayslem/Snow-comparison" target="_blank" class="link-item">
+        <span class="link-icon">GitHub</span>
+        github.com/lindsayslem/Snow-comparison
+      </a>
+      <a href="https://open-meteo.com/en/docs/historical-weather-api" target="_blank" class="link-item">
+        <span class="link-icon">API</span>
+        Open-Meteo Historical Weather API
+      </a>
+    </div>
+
+  </article>
+</main>
+
+<footer>
+  <p>Lindsay Slemboski Oliphant · <a href="https://lindsayslem.github.io" style="color:var(--cyan);text-decoration:none;">Back to Portfolio</a></p>
+</footer>
+
+</body>
+</html>
