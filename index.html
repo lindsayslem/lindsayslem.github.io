@@ -1,536 +1,953 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-
-<meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.25">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
-
-<title>Does Brighton or Snowbird get more snow?</title>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lindsay Slemboski Oliphant</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-code{white-space: pre-wrap;}
-span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
-div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-ul.task-list{list-style: none;}
-ul.task-list li input[type="checkbox"] {
-  width: 0.8em;
-  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
-  vertical-align: middle;
-}
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #0f0f1a;
+    --bg3: #141428;
+    --surface: #1a1a2e;
+    --surface2: #1f1f35;
+    --cyan: #00d4ff;
+    --cyan2: #00a8cc;
+    --cyan-dim: rgba(0, 212, 255, 0.12);
+    --cyan-glow: rgba(0, 212, 255, 0.25);
+    --text: #e8e8f0;
+    --text2: #9090a8;
+    --text3: #5a5a72;
+    --border: rgba(0, 212, 255, 0.15);
+    --border2: rgba(255,255,255,0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 0 48px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10, 10, 15, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    color: var(--cyan);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 8px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--text2);
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+
+  .nav-links a:hover, .nav-links a.active {
+    color: var(--cyan);
+    border-color: var(--border);
+    background: var(--cyan-dim);
+  }
+
+  /* SECTIONS */
+  section {
+    display: none;
+    min-height: 100vh;
+    padding: 120px 48px 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+    animation: fadeIn 0.4s ease;
+  }
+
+  section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* HERO / ABOUT */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    min-height: calc(100vh - 200px);
+  }
+
+  .hero-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-label::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--cyan);
+  }
+
+  h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(36px, 4vw, 52px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+
+  h1 span { color: var(--cyan); }
+
+  .hero-desc {
+    font-size: 17px;
+    color: var(--text2);
+    line-height: 1.75;
+    margin-bottom: 40px;
+    font-weight: 300;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    padding: 12px 24px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--cyan);
+    color: var(--bg);
+    font-weight: 700;
+  }
+
+  .btn-primary:hover {
+    background: #fff;
+    box-shadow: 0 0 32px var(--cyan-glow);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--cyan);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    background: var(--cyan-dim);
+    border-color: var(--cyan);
+  }
+
+  /* STATS PANEL */
+  .stats-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stats-panel::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, var(--cyan-glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .stat-item {
+    margin-bottom: 32px;
+  }
+
+  .stat-item:last-child { margin-bottom: 0; }
+
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .stat-value {
+    font-size: 15px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .stat-bar {
+    margin-top: 8px;
+    height: 2px;
+    background: var(--border2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .stat-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyan2), var(--cyan));
+    border-radius: 2px;
+    animation: fillBar 1.2s ease forwards;
+    transform-origin: left;
+  }
+
+  @keyframes fillBar {
+    from { width: 0; }
+  }
+
+  /* SKILLS TAGS */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    background: var(--cyan-dim);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--cyan);
+    letter-spacing: 0.04em;
+  }
+
+  /* SECTION HEADERS */
+  .section-header {
+    margin-bottom: 64px;
+  }
+
+  .section-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-tag::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 200px;
+  }
+
+  h2 {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  h2 span { color: var(--cyan); }
+
+  .section-sub {
+    margin-top: 16px;
+    font-size: 16px;
+    color: var(--text2);
+    font-weight: 300;
+    max-width: 600px;
+  }
+
+  /* PROJECTS GRID */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 24px;
+  }
+
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 32px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .project-card:hover {
+    border-color: var(--border);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px var(--border);
+  }
+
+  .project-card:hover::before { opacity: 1; }
+
+  .project-number {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+  }
+
+  .project-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .project-desc {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.7;
+    margin-bottom: 24px;
+    font-weight: 300;
+  }
+
+  .project-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--border2);
+  }
+
+  .project-link {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--cyan);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: gap 0.2s;
+  }
+
+  .project-link:hover { gap: 10px; }
+
+  .project-link::after { content: '→'; }
+
+  /* RESUME SECTION */
+  .resume-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+
+  .resume-block {
+    margin-bottom: 48px;
+  }
+
+  .resume-block-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .resume-item {
+    margin-bottom: 28px;
+    padding-left: 16px;
+    border-left: 2px solid var(--border2);
+    transition: border-color 0.2s;
+  }
+
+  .resume-item:hover { border-left-color: var(--cyan); }
+
+  .resume-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+    gap: 16px;
+  }
+
+  .resume-item-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .resume-item-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--cyan);
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  .resume-item-sub {
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 8px;
+  }
+
+  .resume-item-desc {
+    font-size: 13px;
+    color: var(--text3);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* SKILLS GRID */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .skill-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+  }
+
+  .skill-name {
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  .skill-dots {
+    display: flex;
+    gap: 4px;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border2);
+  }
+
+  .dot.filled { background: var(--cyan); }
+
+  /* CONTACT */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .contact-intro {
+    font-size: 17px;
+    color: var(--text2);
+    line-height: 1.75;
+    font-weight: 300;
+    margin-bottom: 40px;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .contact-link:hover {
+    border-color: var(--border);
+    background: var(--surface2);
+    transform: translateX(4px);
+  }
+
+  .contact-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--cyan-dim);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .contact-link-text { flex: 1; }
+
+  .contact-link-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .contact-link-value {
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  .contact-link-arrow {
+    font-size: 14px;
+    color: var(--cyan);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .contact-link:hover .contact-link-arrow { opacity: 1; }
+
+  /* TERMINAL CARD */
+  .terminal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .terminal-bar {
+    padding: 12px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .terminal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .terminal-body {
+    padding: 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  .t-prompt { color: var(--cyan); }
+  .t-cmd { color: var(--text); }
+  .t-output { color: var(--text2); }
+  .t-highlight { color: var(--cyan); }
+  .t-dim { color: var(--text3); }
+
+  /* FOOTER */
+  .site-footer {
+    text-align: center;
+    padding: 40px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+    border-top: 1px solid var(--border2);
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* GLOW BG EFFECTS */
+  .glow-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .glow-1 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(0,180,255,0.06) 0%, transparent 70%);
+    top: -100px;
+    right: -100px;
+  }
+
+  .glow-2 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(0,100,200,0.05) 0%, transparent 70%);
+    bottom: 100px;
+    left: -50px;
+  }
 </style>
-
-
-<script src="data-acquisition-blog_files/libs/clipboard/clipboard.min.js"></script>
-<script src="data-acquisition-blog_files/libs/quarto-html/quarto.js" type="module"></script>
-<script src="data-acquisition-blog_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="data-acquisition-blog_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
-<script src="data-acquisition-blog_files/libs/quarto-html/popper.min.js"></script>
-<script src="data-acquisition-blog_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="data-acquisition-blog_files/libs/quarto-html/anchor.min.js"></script>
-<link href="data-acquisition-blog_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="data-acquisition-blog_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="data-acquisition-blog_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="data-acquisition-blog_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="data-acquisition-blog_files/libs/bootstrap/bootstrap-a74871fe4945b66d259aafc266475145.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-
-
 </head>
+<body>
 
-<body class="quarto-light">
+<div class="glow-orb glow-1"></div>
+<div class="glow-orb glow-2"></div>
 
-<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-  <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#data-acquisition" id="toc-data-acquisition" class="nav-link" data-scroll-target="#data-acquisition">Data Acquisition</a></li>
-  <li><a href="#eda" id="toc-eda" class="nav-link" data-scroll-target="#eda">EDA</a></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
-  <li><a href="#links" id="toc-links" class="nav-link" data-scroll-target="#links">Links</a></li>
+<nav>
+  <a href="#" class="nav-logo" onclick="showSection('about')">LS_</a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="showSection('about')" id="nav-about" class="active">about</a></li>
+    <li><a href="#" onclick="showSection('projects')" id="nav-projects">projects</a></li>
+    <li><a href="#" onclick="showSection('resume')" id="nav-resume">resume</a></li>
+    <li><a href="#" onclick="showSection('contact')" id="nav-contact">contact</a></li>
   </ul>
 </nav>
-</div>
-<main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Does Brighton or Snowbird get more snow?</h1>
-</div>
+<!-- ABOUT -->
+<section id="about" class="active">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-label">CS + Machine Learning</div>
+      <h1>Lindsay<br><span>Slemboski Oliphant</span></h1>
+      <p class="hero-desc">
+        Computer Science student at BYU graduating June 2026, with an emphasis in Machine Learning and a minor in Statistics. I enjoy finding insights in data and implementing AI into real-world systems — from LLM evaluation pipelines to multi-agent applications.
+      </p>
+      <div class="hero-cta">
+        <a href="#" class="btn btn-primary" onclick="showSection('projects')">View Projects</a>
+        <a href="#" class="btn btn-secondary" onclick="showSection('contact')">Get in Touch</a>
+      </div>
+    </div>
 
-
-
-<div class="quarto-title-meta">
-
-    
-  
-    
+    <div class="stats-panel">
+      <div class="stat-item">
+        <div class="stat-label">Current Role</div>
+        <div class="stat-value">Research Assistant — BYU CS Dept.</div>
+        <div class="stat-bar"><div class="stat-fill" style="width:100%"></div></div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Focus Areas</div>
+        <div class="tags">
+          <span class="tag">LLM Evaluation</span>
+          <span class="tag">Prompt Engineering</span>
+          <span class="tag">Data Science</span>
+          <span class="tag">EDA</span>
+          <span class="tag">Data Visualization</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Stack</div>
+        <div class="tags">
+          <span class="tag">Python</span>
+          <span class="tag">SQL</span>
+          <span class="tag">scikit-learn</span>
+          <span class="tag">HuggingFace</span>
+          <span class="tag">OpenAI API</span>
+          <span class="tag">Streamlit</span>
+          <span class="tag">C++</span>
+        </div>
+      </div>
+    </div>
   </div>
-  
-
-
-</header>
-
-
-<section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>Living in Utah means that having something to do in the winter is essential. For many people, that activity is skiing or snowboarding, but it could be difficult to decide which resort you are going to get the most snow at. For this post, I wanted to discover which resort would be better to get a season pass to, based solely on the amount of snow they get. <strong>Over the last ten seasons, did Brighton or Snowbird have better snow?</strong></p>
-<p>To answer this, I extracted historical weather data from Open-Meteo’s Historical Weather API for both resorts (making sure to pick two resorts in different canyons) and narrowed down the data to winter months from 2015-2025.</p>
-<p>I determined that this was ethical data usage because the source encourages use and citation of their API to encourage collaboration in the scientific community.</p>
 </section>
-<section id="data-acquisition" class="level2">
-<h2 class="anchored" data-anchor-id="data-acquisition">Data Acquisition</h2>
-<p>I used Open-Meteo archive endpoint. With this endpoint you are able to request daily and hourly weather variables from a specific latitude and longitude.</p>
-<p>For each resort I converted hourly snow_depth to daily max snow depth (hourly snow depth was the only option for snow depth), I merged that with the daily dates, then I filtered to winter months, and labeled each row with the resort name.</p>
-<p>I defined season as the year of November-April so November 2015 - April 2016 is the 2015 season.</p>
-<p>Then, I looked at days with 6 or more inches of snow and defined them as powder days. Since the API provides snowfall in inches, it was pretty straightforward. Snowfall per season was next where I took the sum of the seasons’ snowfalls. Finally I looked at monthly snowfall averages between the two resorts.</p>
-<p>The full Python code used to aquire and clean the data is here:</p>
-<p>https://github.com/lindsayslem/Snow-comparison</p>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-header">
+    <div class="section-tag">Work</div>
+    <h2>Selected <span>Projects</span></h2>
+    <p class="section-sub">A mix of research, data engineering, and agentic AI — built with real data and shipped publicly.</p>
+  </div>
+
+  <div class="projects-grid">
+
+    <div class="project-card">
+      <div class="project-number">01 — Research</div>
+      <div class="project-title">LLM Evaluation Framework</div>
+      <p class="project-desc">Persona-based evaluation system where one LLM converses with another across multiple turns, measuring output quality, context drift, and answer consistency. Built as part of ongoing research into how language models handle religious and ethical questions at scale.</p>
+      <div class="tags" style="margin-bottom:20px">
+        <span class="tag">Python</span><span class="tag">OpenAI API</span><span class="tag">Embeddings</span><span class="tag">HuggingFace</span>
+      </div>
+      <div class="project-footer">
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--text3)">BYU CS Dept. · 2026</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-number">02 — Agentic AI</div>
+      <div class="project-title">Reality TV Prediction System</div>
+      <p class="project-desc">Multi-agent pipeline with five specialized agents (Researcher, Profiler, Compatibility Analyzer, Predictor, Narrator) built on a YAML-driven architecture. Incorporates RAG, tool calling, hallucination control, and shared context management for follow-up Q&A.</p>
+      <div class="tags" style="margin-bottom:20px">
+        <span class="tag">Python</span><span class="tag">Multi-Agent</span><span class="tag">RAG</span><span class="tag">Prompt Engineering</span>
+      </div>
+      <div class="project-footer">
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--text3)">Agent Engineering · 2026</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-number">03 — Data Analysis</div>
+      <div class="project-title">MLB Statcast Hitting Leaders</div>
+      <p class="project-desc">Engineered an analysis-ready dataset from 2025 MLB Statcast API data. Identified correlations between power metrics, surfaced consistent vs. one-hit performers, and deployed an interactive Streamlit dashboard for non-technical exploration.</p>
+      <div class="tags" style="margin-bottom:20px">
+        <span class="tag">Python</span><span class="tag">pandas</span><span class="tag">Streamlit</span><span class="tag">EDA</span>
+      </div>
+      <div class="project-footer">
+        <a href="https://jerm2000.github.io/stat_386_project/" target="_blank" class="project-link">View Project</a>
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--text3)">Dec 2025</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-number">04 — Data Analysis</div>
+      <div class="project-title">Brighton vs. Snowbird Snow Comparison</div>
+      <p class="project-desc">Ingested 10 seasons of hourly weather data via REST API, engineered custom metrics including powder day thresholds and seasonal boundaries, and published findings as a data blog post revealing meaningful differences between two Utah ski resorts.</p>
+      <div class="tags" style="margin-bottom:20px">
+        <span class="tag">Python</span><span class="tag">REST API</span><span class="tag">pandas</span><span class="tag">Time Series</span>
+      </div>
+      <div class="project-footer">
+        <a href="https://lindsayslem.github.io" target="_blank" class="project-link">View Blog</a>
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--text3)">Nov 2025</span>
+      </div>
+    </div>
+
+  </div>
 </section>
-<section id="eda" class="level2">
-<h2 class="anchored" data-anchor-id="eda">EDA</h2>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="total_powder_days.png" class="img-fluid figure-img"></p>
-<figcaption>Total Powder Days</figcaption>
-</figure>
+
+<!-- RESUME -->
+<section id="resume">
+  <div class="section-header">
+    <div class="section-tag">Background</div>
+    <h2>Resume <span>Overview</span></h2>
+    <p class="section-sub">Education, experience, and skills at a glance.</p>
+  </div>
+
+  <div class="resume-grid">
+    <div>
+      <div class="resume-block">
+        <div class="resume-block-title">Experience</div>
+
+        <div class="resume-item">
+          <div class="resume-item-header">
+            <div class="resume-item-title">Research Assistant</div>
+            <div class="resume-item-date">Jan 2026–Present</div>
+          </div>
+          <div class="resume-item-sub">BYU Dept. of Computer Science</div>
+          <div class="resume-item-desc">Building LLM evaluation frameworks, mining large-scale conversation datasets, and presenting weekly findings to faculty and graduate researchers.</div>
+        </div>
+
+        <div class="resume-item">
+          <div class="resume-item-header">
+            <div class="resume-item-title">Sales Representative</div>
+            <div class="resume-item-date">Jun–Aug 2023</div>
+          </div>
+          <div class="resume-item-sub">Lumio Solar</div>
+          <div class="resume-item-desc">Averaged 60+ daily prospecting contacts, qualified homeowners for solar installation, and maintained CRM performance tracking.</div>
+        </div>
+      </div>
+
+      <div class="resume-block">
+        <div class="resume-block-title">Education</div>
+        <div class="resume-item">
+          <div class="resume-item-header">
+            <div class="resume-item-title">B.S. Computer Science</div>
+            <div class="resume-item-date">Jun 2026</div>
+          </div>
+          <div class="resume-item-sub">Brigham Young University</div>
+          <div class="resume-item-desc">Emphasis in Machine Learning · Minor in Statistics · Coursework in Advanced ML, Deep Learning, Agent Engineering, Mathematics of Data Science</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="resume-block">
+        <div class="resume-block-title">Technical Skills</div>
+        <div class="skills-grid">
+          <div class="skill-row"><span class="skill-name">Python</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+          <div class="skill-row"><span class="skill-name">SQL</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+          <div class="skill-row"><span class="skill-name">LLM Evaluation</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+          <div class="skill-row"><span class="skill-name">Prompt Engineering</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+          <div class="skill-row"><span class="skill-name">Machine Learning</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+          <div class="skill-row"><span class="skill-name">RAG / Agents</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+          <div class="skill-row"><span class="skill-name">Data Analysis</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+          <div class="skill-row"><span class="skill-name">C++</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div></div>
+        </div>
+      </div>
+
+      <div class="resume-block" style="margin-top:32px">
+        <div class="resume-block-title">Download</div>
+        <a href="Lindsay_Slemboski_Oliphant_Resume.pdf" class="btn btn-secondary" style="display:inline-block;margin-top:8px">Download Full Resume →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-header">
+    <div class="section-tag">Connect</div>
+    <h2>Get in <span>Touch</span></h2>
+  </div>
+
+  <div class="contact-grid">
+    <div>
+      <p class="contact-intro">
+        I'm actively looking for internship and full-time opportunities in AI engineering, ML, and data science. If you're working on something interesting — I'd love to hear about it.
+      </p>
+      <div class="contact-links">
+        <a href="mailto:lindsayslem@gmail.com" class="contact-link">
+          <div class="contact-icon">✉</div>
+          <div class="contact-link-text">
+            <div class="contact-link-label">Email</div>
+            <div class="contact-link-value">lindsayslem@gmail.com</div>
+          </div>
+          <div class="contact-link-arrow">→</div>
+        </a>
+        <a href="https://github.com/lindsayslem" target="_blank" class="contact-link">
+          <div class="contact-icon" style="font-size:14px">GH</div>
+          <div class="contact-link-text">
+            <div class="contact-link-label">GitHub</div>
+            <div class="contact-link-value">github.com/lindsayslem</div>
+          </div>
+          <div class="contact-link-arrow">→</div>
+        </a>
+        <a href="tel:9096462830" class="contact-link">
+          <div class="contact-icon">☎</div>
+          <div class="contact-link-text">
+            <div class="contact-link-label">Phone</div>
+            <div class="contact-link-value">(909) 646-2830</div>
+          </div>
+          <div class="contact-link-arrow">→</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot" style="background:#ff5f57"></div>
+        <div class="terminal-dot" style="background:#ffbd2e"></div>
+        <div class="terminal-dot" style="background:#28ca42"></div>
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--text3);margin-left:8px">lindsay@portfolio ~ </span>
+      </div>
+      <div class="terminal-body">
+        <div><span class="t-prompt">$ </span><span class="t-cmd">whoami</span></div>
+        <div class="t-output">Lindsay Slemboski Oliphant</div>
+        <br>
+        <div><span class="t-prompt">$ </span><span class="t-cmd">cat interests.txt</span></div>
+        <div class="t-output">LLM evaluation + agentic AI</div>
+        <div class="t-output">data analysis + statistical modeling</div>
+        <div class="t-output">building things that actually work</div>
+        <br>
+        <div><span class="t-prompt">$ </span><span class="t-cmd">echo $STATUS</span></div>
+        <div><span class="t-highlight">actively seeking opportunities</span></div>
+        <br>
+        <div><span class="t-prompt">$ </span><span class="t-cmd">echo $AVAILABLE</span></div>
+        <div class="t-highlight">open to relocate · remote friendly<span class="t-dim" id="cursor">_</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="site-footer">
+  <p>Lindsay Slemboski Oliphant · Built with HTML/CSS · 2026</p>
 </div>
-<p>From this, we can see that Brighton has had more total powder days in the last 10 years.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="total_snowfall_per_season.png" class="img-fluid figure-img"></p>
-<figcaption>Total Snowfall per Season</figcaption>
-</figure>
-</div>
-<p>This graph depicts that over the last 10 years, Brighton has had more total seasonal snowfall than Snowbird.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="average_monthly_snowfall.png" class="img-fluid figure-img"></p>
-<figcaption>Average Monthly Snowfall</figcaption>
-</figure>
-</div>
-<p>Once again the graph shows that Brighton also has a higher average monthly snowfall.</p>
-<p>I found it interesting that Brighton was higher than Snowbird in all categories.</p>
-</section>
-<section id="conclusion" class="level2">
-<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>Based on the 10 winters of historical weather data, Brighton consistently ourperformed Snowbird in all categories. Although Snowbird is known for steeper terrain and spring riding, Brighton objectively gets more snow on average, making it the better choise if snowfal is the deciding factor for a season pass.</p>
-</section>
-<section id="links" class="level2">
-<h2 class="anchored" data-anchor-id="links">Links</h2>
-<p>https://open-meteo.com/en/docs/historical-weather-api?latitude=40.5984&amp;longitude=-111.5838&amp;timezone=America%2FDenver&amp;start_date=2015-11-07&amp;hourly=snow_depth&amp;daily=temperature_2m_mean,snowfall_sum,precipitation_sum,wind_speed_10m_max&amp;temperature_unit=fahrenheit&amp;wind_speed_unit=mph&amp;precipitation_unit=inch</p>
-<p>https://github.com/lindsayslem/Snow-comparison</p>
-</section>
 
-</main>
-<!-- /main column -->
-<script id="quarto-html-after-body" type="application/javascript">
-  window.document.addEventListener("DOMContentLoaded", function (event) {
-    const icon = "";
-    const anchorJS = new window.AnchorJS();
-    anchorJS.options = {
-      placement: 'right',
-      icon: icon
-    };
-    anchorJS.add('.anchored');
-    const isCodeAnnotation = (el) => {
-      for (const clz of el.classList) {
-        if (clz.startsWith('code-annotation-')) {                     
-          return true;
-        }
-      }
-      return false;
-    }
-    const onCopySuccess = function(e) {
-      // button target
-      const button = e.trigger;
-      // don't keep focus
-      button.blur();
-      // flash "checked"
-      button.classList.add('code-copy-button-checked');
-      var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
-      let tooltip;
-      if (window.bootstrap) {
-        button.setAttribute("data-bs-toggle", "tooltip");
-        button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
-        tooltip = new bootstrap.Tooltip(button, 
-          { trigger: "manual", 
-            customClass: "code-copy-button-tooltip",
-            offset: [0, -8]});
-        tooltip.show();    
-      }
-      setTimeout(function() {
-        if (tooltip) {
-          tooltip.hide();
-          button.removeAttribute("data-bs-title");
-          button.removeAttribute("data-bs-toggle");
-          button.removeAttribute("data-bs-placement");
-        }
-        button.setAttribute("title", currentTitle);
-        button.classList.remove('code-copy-button-checked');
-      }, 1000);
-      // clear code selection
-      e.clearSelection();
-    }
-    const getTextToCopy = function(trigger) {
-      const outerScaffold = trigger.parentElement.cloneNode(true);
-      const codeEl = outerScaffold.querySelector('code');
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-      text: getTextToCopy
-    });
-    clipboard.on('success', onCopySuccess);
-    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-        text: getTextToCopy,
-        container: window.document.getElementById('quarto-embedded-source-code-modal')
-      });
-      clipboardModal.on('success', onCopySuccess);
-    }
-      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-      var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
-      var isInternal = (href) => {
-          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-      }
-      // Inspect non-navigation links and adorn them if external
-     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-      for (var i=0; i<links.length; i++) {
-        const link = links[i];
-        if (!isInternal(link.href)) {
-          // undo the damage that might have been done by quarto-nav.js in the case of
-          // links that we want to consider external
-          if (link.dataset.originalHref !== undefined) {
-            link.href = link.dataset.originalHref;
-          }
-        }
-      }
-    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-      const config = {
-        allowHTML: true,
-        maxWidth: 500,
-        delay: 100,
-        arrow: false,
-        appendTo: function(el) {
-            return el.parentElement;
-        },
-        interactive: true,
-        interactiveBorder: 10,
-        theme: 'quarto',
-        placement: 'bottom-start',
-      };
-      if (contentFn) {
-        config.content = contentFn;
-      }
-      if (onTriggerFn) {
-        config.onTrigger = onTriggerFn;
-      }
-      if (onUntriggerFn) {
-        config.onUntrigger = onUntriggerFn;
-      }
-      window.tippy(el, config); 
-    }
-    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-    for (var i=0; i<noterefs.length; i++) {
-      const ref = noterefs[i];
-      tippyHover(ref, function() {
-        // use id or data attribute instead here
-        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-        try { href = new URL(href).hash; } catch {}
-        const id = href.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note) {
-          return note.innerHTML;
-        } else {
-          return "";
-        }
-      });
-    }
-    const xrefs = window.document.querySelectorAll('a.quarto-xref');
-    const processXRef = (id, note) => {
-      // Strip column container classes
-      const stripColumnClz = (el) => {
-        el.classList.remove("page-full", "page-columns");
-        if (el.children) {
-          for (const child of el.children) {
-            stripColumnClz(child);
-          }
-        }
-      }
-      stripColumnClz(note)
-      if (id === null || id.startsWith('sec-')) {
-        // Special case sections, only their first couple elements
-        const container = document.createElement("div");
-        if (note.children && note.children.length > 2) {
-          container.appendChild(note.children[0].cloneNode(true));
-          for (let i = 1; i < note.children.length; i++) {
-            const child = note.children[i];
-            if (child.tagName === "P" && child.innerText === "") {
-              continue;
-            } else {
-              container.appendChild(child.cloneNode(true));
-              break;
-            }
-          }
-          if (window.Quarto?.typesetMath) {
-            window.Quarto.typesetMath(container);
-          }
-          return container.innerHTML
-        } else {
-          if (window.Quarto?.typesetMath) {
-            window.Quarto.typesetMath(note);
-          }
-          return note.innerHTML;
-        }
-      } else {
-        // Remove any anchor links if they are present
-        const anchorLink = note.querySelector('a.anchorjs-link');
-        if (anchorLink) {
-          anchorLink.remove();
-        }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(note);
-        }
-        if (note.classList.contains("callout")) {
-          return note.outerHTML;
-        } else {
-          return note.innerHTML;
-        }
-      }
-    }
-    for (var i=0; i<xrefs.length; i++) {
-      const xref = xrefs[i];
-      tippyHover(xref, undefined, function(instance) {
-        instance.disable();
-        let url = xref.getAttribute('href');
-        let hash = undefined; 
-        if (url.startsWith('#')) {
-          hash = url;
-        } else {
-          try { hash = new URL(url).hash; } catch {}
-        }
-        if (hash) {
-          const id = hash.replace(/^#\/?/, "");
-          const note = window.document.getElementById(id);
-          if (note !== null) {
-            try {
-              const html = processXRef(id, note.cloneNode(true));
-              instance.setContent(html);
-            } finally {
-              instance.enable();
-              instance.show();
-            }
-          } else {
-            // See if we can fetch this
-            fetch(url.split('#')[0])
-            .then(res => res.text())
-            .then(html => {
-              const parser = new DOMParser();
-              const htmlDoc = parser.parseFromString(html, "text/html");
-              const note = htmlDoc.getElementById(id);
-              if (note !== null) {
-                const html = processXRef(id, note);
-                instance.setContent(html);
-              } 
-            }).finally(() => {
-              instance.enable();
-              instance.show();
-            });
-          }
-        } else {
-          // See if we can fetch a full url (with no hash to target)
-          // This is a special case and we should probably do some content thinning / targeting
-          fetch(url)
-          .then(res => res.text())
-          .then(html => {
-            const parser = new DOMParser();
-            const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.querySelector('main.content');
-            if (note !== null) {
-              // This should only happen for chapter cross references
-              // (since there is no id in the URL)
-              // remove the first header
-              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-                note.children[0].remove();
-              }
-              const html = processXRef(null, note);
-              instance.setContent(html);
-            } 
-          }).finally(() => {
-            instance.enable();
-            instance.show();
-          });
-        }
-      }, function(instance) {
-      });
-    }
-        let selectedAnnoteEl;
-        const selectorForAnnotation = ( cell, annotation) => {
-          let cellAttr = 'data-code-cell="' + cell + '"';
-          let lineAttr = 'data-code-annotation="' +  annotation + '"';
-          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-          return selector;
-        }
-        const selectCodeLines = (annoteEl) => {
-          const doc = window.document;
-          const targetCell = annoteEl.getAttribute("data-target-cell");
-          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-          const lineIds = lines.map((line) => {
-            return targetCell + "-" + line;
-          })
-          let top = null;
-          let height = null;
-          let parent = null;
-          if (lineIds.length > 0) {
-              //compute the position of the single el (top and bottom and make a div)
-              const el = window.document.getElementById(lineIds[0]);
-              top = el.offsetTop;
-              height = el.offsetHeight;
-              parent = el.parentElement.parentElement;
-            if (lineIds.length > 1) {
-              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-              height = bottom - top;
-            }
-            if (top !== null && height !== null && parent !== null) {
-              // cook up a div (if necessary) and position it 
-              let div = window.document.getElementById("code-annotation-line-highlight");
-              if (div === null) {
-                div = window.document.createElement("div");
-                div.setAttribute("id", "code-annotation-line-highlight");
-                div.style.position = 'absolute';
-                parent.appendChild(div);
-              }
-              div.style.top = top - 2 + "px";
-              div.style.height = height + 4 + "px";
-              div.style.left = 0;
-              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-              if (gutterDiv === null) {
-                gutterDiv = window.document.createElement("div");
-                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-                gutterDiv.style.position = 'absolute';
-                const codeCell = window.document.getElementById(targetCell);
-                const gutter = codeCell.querySelector('.code-annotation-gutter');
-                gutter.appendChild(gutterDiv);
-              }
-              gutterDiv.style.top = top - 2 + "px";
-              gutterDiv.style.height = height + 4 + "px";
-            }
-            selectedAnnoteEl = annoteEl;
-          }
-        };
-        const unselectCodeLines = () => {
-          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-          elementsIds.forEach((elId) => {
-            const div = window.document.getElementById(elId);
-            if (div) {
-              div.remove();
-            }
-          });
-          selectedAnnoteEl = undefined;
-        };
-          // Handle positioning of the toggle
-      window.addEventListener(
-        "resize",
-        throttle(() => {
-          elRect = undefined;
-          if (selectedAnnoteEl) {
-            selectCodeLines(selectedAnnoteEl);
-          }
-        }, 10)
-      );
-      function throttle(fn, ms) {
-      let throttle = false;
-      let timer;
-        return (...args) => {
-          if(!throttle) { // first call gets through
-              fn.apply(this, args);
-              throttle = true;
-          } else { // all the others get throttled
-              if(timer) clearTimeout(timer); // cancel #2
-              timer = setTimeout(() => {
-                fn.apply(this, args);
-                timer = throttle = false;
-              }, ms);
-          }
-        };
-      }
-        // Attach click handler to the DT
-        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
-        for (const annoteDlNode of annoteDls) {
-          annoteDlNode.addEventListener('click', (event) => {
-            const clickedEl = event.target;
-            if (clickedEl !== selectedAnnoteEl) {
-              unselectCodeLines();
-              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
-              if (activeEl) {
-                activeEl.classList.remove('code-annotation-active');
-              }
-              selectCodeLines(clickedEl);
-              clickedEl.classList.add('code-annotation-active');
-            } else {
-              // Unselect the line
-              unselectCodeLines();
-              clickedEl.classList.remove('code-annotation-active');
-            }
-          });
-        }
-    const findCites = (el) => {
-      const parentEl = el.parentElement;
-      if (parentEl) {
-        const cites = parentEl.dataset.cites;
-        if (cites) {
-          return {
-            el,
-            cites: cites.split(' ')
-          };
-        } else {
-          return findCites(el.parentElement)
-        }
-      } else {
-        return undefined;
-      }
-    };
-    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-    for (var i=0; i<bibliorefs.length; i++) {
-      const ref = bibliorefs[i];
-      const citeInfo = findCites(ref);
-      if (citeInfo) {
-        tippyHover(citeInfo.el, function() {
-          var popup = window.document.createElement('div');
-          citeInfo.cites.forEach(function(cite) {
-            var citeDiv = window.document.createElement('div');
-            citeDiv.classList.add('hanging-indent');
-            citeDiv.classList.add('csl-entry');
-            var biblioDiv = window.document.getElementById('ref-' + cite);
-            if (biblioDiv) {
-              citeDiv.innerHTML = biblioDiv.innerHTML;
-            }
-            popup.appendChild(citeDiv);
-          });
-          return popup.innerHTML;
-        });
-      }
-    }
+<script>
+  function showSection(id) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('nav-' + id).classList.add('active');
+    window.scrollTo(0, 0);
+    return false;
+  }
+
+  document.querySelectorAll('nav a, .btn').forEach(a => {
+    a.addEventListener('click', e => e.preventDefault());
   });
-  </script>
-</div> <!-- /content -->
 
-
-
-
-</body></html>
+  // Cursor blink
+  setInterval(() => {
+    const c = document.getElementById('cursor');
+    if (c) c.style.opacity = c.style.opacity === '0' ? '1' : '0';
+  }, 600);
+</script>
+</body>
+</html>
