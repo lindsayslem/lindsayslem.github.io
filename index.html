@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lindsay Slemboski Oliphant</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #0f0f1a;
+    --bg3: #141428;
+    --surface: #1a1a2e;
+    --surface2: #1f1f35;
+    --cyan: #00d4ff;
+    --cyan2: #00a8cc;
+    --cyan-dim: rgba(0, 212, 255, 0.12);
+    --cyan-glow: rgba(0, 212, 255, 0.25);
+    --text: #e8e8f0;
+    --text2: #9090a8;
+    --text3: #5a5a72;
+    --border: rgba(0, 212, 255, 0.15);
+    --border2: rgba(255,255,255,0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 0 48px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10, 10, 15, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border2);
+  }
+
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    color: var(--cyan);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 8px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--text2);
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+
+  .nav-links a:hover, .nav-links a.active {
+    color: var(--cyan);
+    border-color: var(--border);
+    background: var(--cyan-dim);
+  }
+
+  /* SECTIONS */
+  section {
+    display: none;
+    min-height: 100vh;
+    padding: 120px 48px 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+    animation: fadeIn 0.4s ease;
+  }
+
+  section.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* HERO / ABOUT */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    min-height: calc(100vh - 200px);
+  }
+
+  .hero-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .hero-label::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--cyan);
+  }
+
+  h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(36px, 4vw, 52px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+
+  h1 span { color: var(--cyan); }
+
+  .hero-desc {
+    font-size: 17px;
+    color: var(--text2);
+    line-height: 1.75;
+    margin-bottom: 40px;
+    font-weight: 300;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    padding: 12px 24px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--cyan);
+    color: var(--bg);
+    font-weight: 700;
+  }
+
+  .btn-primary:hover {
+    background: #fff;
+    box-shadow: 0 0 32px var(--cyan-glow);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--cyan);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    background: var(--cyan-dim);
+    border-color: var(--cyan);
+  }
+
+  /* STATS PANEL */
+  .stats-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stats-panel::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, var(--cyan-glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .stat-item {
+    margin-bottom: 32px;
+  }
+
+  .stat-item:last-child { margin-bottom: 0; }
+
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .stat-value {
+    font-size: 15px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .stat-bar {
+    margin-top: 8px;
+    height: 2px;
+    background: var(--border2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .stat-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyan2), var(--cyan));
+    border-radius: 2px;
+    animation: fillBar 1.2s ease forwards;
+    transform-origin: left;
+  }
+
+  @keyframes fillBar {
+    from { width: 0; }
+  }
+
+  /* SKILLS TAGS */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    background: var(--cyan-dim);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--cyan);
+    letter-spacing: 0.04em;
+  }
+
+  /* SECTION HEADERS */
+  .section-header {
+    margin-bottom: 64px;
+  }
+
+  .section-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-tag::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    max-width: 200px;
+  }
+
+  h2 {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(28px, 3vw, 40px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+  }
+
+  h2 span { color: var(--cyan); }
+
+  .section-sub {
+    margin-top: 16px;
+    font-size: 16px;
+    color: var(--text2);
+    font-weight: 300;
+    max-width: 600px;
+  }
+
+  /* PROJECTS GRID */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 24px;
+  }
+
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 32px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .project-card:hover {
+    border-color: var(--border);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px var(--border);
+  }
+
+  .project-card:hover::before { opacity: 1; }
+
+  .project-number {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+  }
+
+  .project-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .project-desc {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.7;
+    margin-bottom: 24px;
+    font-weight: 300;
+  }
+
+  .project-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--border2);
+  }
+
+  .project-link {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--cyan);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: gap 0.2s;
+  }
+
+  .project-link:hover { gap: 10px; }
+
+  .project-link::after { content: '→'; }
+
+  /* RESUME SECTION */
+  .resume-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+  }
+
+  .resume-block {
+    margin-bottom: 48px;
+  }
+
+  .resume-block-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .resume-item {
+    margin-bottom: 28px;
+    padding-left: 16px;
+    border-left: 2px solid var(--border2);
+    transition: border-color 0.2s;
+  }
+
+  .resume-item:hover { border-left-color: var(--cyan); }
+
+  .resume-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+    gap: 16px;
+  }
+
+  .resume-item-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .resume-item-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--cyan);
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+  }
+
+  .resume-item-sub {
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 8px;
+  }
+
+  .resume-item-desc {
+    font-size: 13px;
+    color: var(--text3);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* SKILLS GRID */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .skill-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border-radius: 6px;
+    border: 1px solid var(--border2);
+  }
+
+  .skill-name {
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  .skill-dots {
+    display: flex;
+    gap: 4px;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border2);
+  }
+
+  .dot.filled { background: var(--cyan); }
+
+  /* CONTACT */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .contact-intro {
+    font-size: 17px;
+    color: var(--text2);
+    line-height: 1.75;
+    font-weight: 300;
+    margin-bottom: 40px;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .contact-link:hover {
+    border-color: var(--border);
+    background: var(--surface2);
+    transform: translateX(4px);
+  }
+
+  .contact-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--cyan-dim);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .contact-link-text { flex: 1; }
+
+  .contact-link-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .contact-link-value {
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  .contact-link-arrow {
+    font-size: 14px;
+    color: var(--cyan);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .contact-link:hover .contact-link-arrow { opacity: 1; }
+
+  /* TERMINAL CARD */
+  .terminal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .terminal-bar {
+    padding: 12px 16px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .terminal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .terminal-body {
+    padding: 24px;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  .t-prompt { color: var(--cyan); }
+  .t-cmd { color: var(--text); }
+  .t-output { color: var(--text2); }
+  .t-highlight { color: var(--cyan); }
+  .t-dim { color: var(--text3); }
+
+  /* FOOTER */
+  .site-footer {
+    text-align: center;
+    padding: 40px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+    border-top: 1px solid var(--border2);
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* GLOW BG EFFECTS */
+  .glow-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .glow-1 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(0,180,255,0.06) 0%, transparent 70%);
+    top: -100px;
+    right: -100px;
+  }
+
+  .glow-2 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(0,100,200,0.05) 0%, transparent 70%);
+    bottom: 100px;
+    left: -50px;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow-orb glow-1"></div>
+<div class="glow-orb glow-2"></div>
+
+<nav>
+  <a href="#" class="nav-logo" onclick="showSection('about')">LS_</a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="showSection('about')" id="nav-about" class="active">about</a></li>
+    <li><a href="#" onclick="showSection('projects')" id="nav-projects">projects</a></li>
+    <li><a href="#" onclick="showSection('resume')" id="nav-resume">resume</a></li>
+    <li><a href="#" onclick="showSection('contact')" id="nav-contact">contact</a></li>
+  </ul>
+</nav>
+
+<!-- ABOUT -->
+<section id="about" class="active">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-label">CS + Machine Learning</div>
+      <h1>Lindsay<br><span>Slemboski Oliphant</span></h1>
+      <p class="hero-desc">
+        Computer Science student at BYU graduating June 2026, with an emphasis in Machine Learning and a minor in Statistics. I enjoy finding insights in data and implementing AI into real-world systems — from LLM evaluation pipelines to multi-agent applications.
+      </p>
+      <div class="hero-cta">
+        <a href="#" class="btn btn-primary" onclick="showSection('projects')">View Projects</a>
+        <a href="#" class="btn btn-secondary" onclick="showSection('contact')">Get in Touch</a>
+      </div>
+    </div>
+
+    <div class="stats-panel">
+      <div class="stat-item">
+        <div class="stat-label">Current Role</div>
+        <div class="stat-value">Research Assistant — BYU CS Dept.</div>
+        <div class="stat-bar"><div class="stat-fill" style="width:100%"></div></div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Focus Areas</div>
+        <div class="tags">
+          <span class="tag">LLM Evaluation</span>
+          <span class="tag">Prompt Engineering</span>
+          <span class="tag">Data Science</span>
+          <span class="tag">EDA</span>
+          <span class="tag">Data Visualization</span>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Stack</div>
+        <div class="tags">
+          <span class="tag">Python</span>
+          <span class="tag">SQL</span>
+          <span class="tag">scikit-learn</span>
+          <span class="tag">HuggingFace</span>
+          <span class="tag">OpenAI API</span>
+          <span class="tag">Streamlit</span>
+          <span class="tag">C++</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-header">
+    <div class="section-tag">Work</div>
+    <h2>Selected <span>Projects</span></h2>
+    <p class="section-sub">A mix of research, data engineering, and agentic AI — built with real data and shipped publicly.</p>
+  </div>
+
+  <div class="projects-grid">
+
+    <div class="project-card">
+      <div class="project-number">01 — Research</div>
+      <div class="project-title">LLM Evaluation Framework</div>
+      <p class="project-desc">Persona-based evaluation system where one LLM converses with another across multiple turns, measuring output quality, context drift, and answer consistency. Built as part of ongoing research into how language models handle religious and ethical questions at scale.</p>
+      <div class="tags" style="margin-bottom:20px">
+        <span class="tag">Python</span><span class="tag">OpenAI API</span><span class="tag">Embeddings</span><span class="tag">HuggingFace</span>
+      </div>
+      <div class="project-footer">
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--text3)">BYU CS Dept. · 2026</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-number">02 — Agentic AI</div>
+      <div class="project-title">Reality TV Prediction System</div>
+      <p class="project-desc">Multi-agent pipeline with five specialized agents (Researcher, Profiler, Compatibility Analyzer, Predictor, Narrator) built on a YAML-driven architecture. Incorporates RAG, tool calling, hallucination control, and shared context management for follow-up Q&A.</p>
+      <div class="tags" style="margin-bottom:20px">
+        <span class="tag">Python</span><span class="tag">Multi-Agent</span><span class="tag">RAG</span><span class="tag">Prompt Engineering</span>
+      </div>
+      <div class="project-footer">
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--text3)">Agent Engineering · 2026</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-number">03 — Data Analysis</div>
+      <div class="project-title">MLB Statcast Hitting Leaders</div>
+      <p class="project-desc">Engineered an analysis-ready dataset from 2025 MLB Statcast API data. Identified correlations between power metrics, surfaced consistent vs. one-hit performers, and deployed an interactive Streamlit dashboard for non-technical exploration.</p>
+      <div class="tags" style="margin-bottom:20px">
+        <span class="tag">Python</span><span class="tag">pandas</span><span class="tag">Streamlit</span><span class="tag">EDA</span>
+      </div>
+      <div class="project-footer">
+        <a href="https://jerm2000.github.io/stat_386_project/" target="_blank" class="project-link">View Project</a>
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--text3)">Dec 2025</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-number">04 — Data Analysis</div>
+      <div class="project-title">Brighton vs. Snowbird Snow Comparison</div>
+      <p class="project-desc">Ingested 10 seasons of hourly weather data via REST API, engineered custom metrics including powder day thresholds and seasonal boundaries, and published findings as a data blog post revealing meaningful differences between two Utah ski resorts.</p>
+      <div class="tags" style="margin-bottom:20px">
+        <span class="tag">Python</span><span class="tag">REST API</span><span class="tag">pandas</span><span class="tag">Time Series</span>
+      </div>
+      <div class="project-footer">
+        <a href="https://lindsayslem.github.io/snow-comparison.html" target="_blank" class="project-link">View Blog</a>
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--text3)">Nov 2025</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- RESUME -->
+<section id="resume">
+  <div class="section-header">
+    <div class="section-tag">Background</div>
+    <h2>Resume <span>Overview</span></h2>
+    <p class="section-sub">Education, experience, and skills at a glance.</p>
+  </div>
+
+  <div class="resume-grid">
+    <div>
+      <div class="resume-block">
+        <div class="resume-block-title">Experience</div>
+
+        <div class="resume-item">
+          <div class="resume-item-header">
+            <div class="resume-item-title">Research Assistant</div>
+            <div class="resume-item-date">Jan 2026–Present</div>
+          </div>
+          <div class="resume-item-sub">BYU Dept. of Computer Science</div>
+          <div class="resume-item-desc">Building LLM evaluation frameworks, mining large-scale conversation datasets, and presenting weekly findings to faculty and graduate researchers.</div>
+        </div>
+
+        <div class="resume-item">
+          <div class="resume-item-header">
+            <div class="resume-item-title">Sales Representative</div>
+            <div class="resume-item-date">Jun–Aug 2023</div>
+          </div>
+          <div class="resume-item-sub">Lumio Solar</div>
+          <div class="resume-item-desc">Averaged 60+ daily prospecting contacts, qualified homeowners for solar installation, and maintained CRM performance tracking.</div>
+        </div>
+      </div>
+
+      <div class="resume-block">
+        <div class="resume-block-title">Education</div>
+        <div class="resume-item">
+          <div class="resume-item-header">
+            <div class="resume-item-title">B.S. Computer Science</div>
+            <div class="resume-item-date">Jun 2026</div>
+          </div>
+          <div class="resume-item-sub">Brigham Young University</div>
+          <div class="resume-item-desc">Emphasis in Machine Learning · Minor in Statistics · Coursework in Advanced ML, Deep Learning, Agent Engineering, Mathematics of Data Science</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="resume-block">
+        <div class="resume-block-title">Technical Skills</div>
+        <div class="skills-grid">
+          <div class="skill-row"><span class="skill-name">Python</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+          <div class="skill-row"><span class="skill-name">SQL</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+          <div class="skill-row"><span class="skill-name">LLM Evaluation</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div></div></div>
+          <div class="skill-row"><span class="skill-name">Prompt Engineering</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+          <div class="skill-row"><span class="skill-name">Machine Learning</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+          <div class="skill-row"><span class="skill-name">RAG / Agents</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+          <div class="skill-row"><span class="skill-name">Data Analysis</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div></div></div>
+          <div class="skill-row"><span class="skill-name">C++</span><div class="skill-dots"><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div></div></div>
+        </div>
+      </div>
+
+      <div class="resume-block" style="margin-top:32px">
+        <div class="resume-block-title">Download</div>
+        <a href="Lindsay_Slemboski_Oliphant_Resume.pdf" class="btn btn-secondary" style="display:inline-block;margin-top:8px">Download Full Resume →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-header">
+    <div class="section-tag">Connect</div>
+    <h2>Get in <span>Touch</span></h2>
+  </div>
+
+  <div class="contact-grid">
+    <div>
+      <p class="contact-intro">
+        I'm actively looking for internship and full-time opportunities in AI engineering, ML, and data science. If you're working on something interesting — I'd love to hear about it.
+      </p>
+      <div class="contact-links">
+        <a href="mailto:lindsayslem@gmail.com" class="contact-link">
+          <div class="contact-icon">✉</div>
+          <div class="contact-link-text">
+            <div class="contact-link-label">Email</div>
+            <div class="contact-link-value">lindsayslem@gmail.com</div>
+          </div>
+          <div class="contact-link-arrow">→</div>
+        </a>
+        <a href="https://github.com/lindsayslem" target="_blank" class="contact-link">
+          <div class="contact-icon" style="font-size:14px">GH</div>
+          <div class="contact-link-text">
+            <div class="contact-link-label">GitHub</div>
+            <div class="contact-link-value">github.com/lindsayslem</div>
+          </div>
+          <div class="contact-link-arrow">→</div>
+        </a>
+        <a href="tel:9096462830" class="contact-link">
+          <div class="contact-icon">☎</div>
+          <div class="contact-link-text">
+            <div class="contact-link-label">Phone</div>
+            <div class="contact-link-value">(909) 646-2830</div>
+          </div>
+          <div class="contact-link-arrow">→</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="terminal-dot" style="background:#ff5f57"></div>
+        <div class="terminal-dot" style="background:#ffbd2e"></div>
+        <div class="terminal-dot" style="background:#28ca42"></div>
+        <span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--text3);margin-left:8px">lindsay@portfolio ~ </span>
+      </div>
+      <div class="terminal-body">
+        <div><span class="t-prompt">$ </span><span class="t-cmd">whoami</span></div>
+        <div class="t-output">Lindsay Slemboski Oliphant</div>
+        <br>
+        <div><span class="t-prompt">$ </span><span class="t-cmd">cat interests.txt</span></div>
+        <div class="t-output">LLM evaluation + agentic AI</div>
+        <div class="t-output">data analysis + statistical modeling</div>
+        <div class="t-output">building things that actually work</div>
+        <br>
+        <div><span class="t-prompt">$ </span><span class="t-cmd">echo $STATUS</span></div>
+        <div><span class="t-highlight">actively seeking opportunities</span></div>
+        <br>
+        <div><span class="t-prompt">$ </span><span class="t-cmd">echo $AVAILABLE</span></div>
+        <div class="t-highlight">open to relocate · remote friendly<span class="t-dim" id="cursor">_</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="site-footer">
+  <p>Lindsay Slemboski Oliphant · Built with HTML/CSS · 2026</p>
+</div>
+
+<script>
+  function showSection(id) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('nav-' + id).classList.add('active');
+    window.scrollTo(0, 0);
+    return false;
+  }
+
+  document.querySelectorAll('nav a, .btn').forEach(a => {
+    a.addEventListener('click', e => e.preventDefault());
+  });
+
+  // Cursor blink
+  setInterval(() => {
+    const c = document.getElementById('cursor');
+    if (c) c.style.opacity = c.style.opacity === '0' ? '1' : '0';
+  }, 600);
+</script>
+</body>
+</html>
